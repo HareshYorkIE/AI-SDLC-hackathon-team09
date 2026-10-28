@@ -1,0 +1,93 @@
+{
+  "_note": "Static stand-in for the hub.york.ie MCP team directory (not yet connected). Shape in docs/schemas.md. Replace this file's reader with the real MCP call once hub.york.ie is wired up — the planner's assignment logic does not change.",
+  "team": [
+    {
+      "id": "u1",
+      "name": "Priya Nandan",
+      "email": "priya.nandan@york.ie",
+      "discipline": "dev",
+      "technologies": ["react", "typescript", "node", "rest-api"],
+      "experience_years": 6,
+      "seniority": "senior",
+      "max_complexity": "high",
+      "current_load": 2
+    },
+    {
+      "id": "u2",
+      "name": "Dmitri Volkov",
+      "email": "dmitri.volkov@york.ie",
+      "discipline": "dev",
+      "technologies": ["node", "postgres", "csv", "python"],
+      "experience_years": 3,
+      "seniority": "mid",
+      "max_complexity": "medium",
+      "current_load": 1
+    },
+    {
+      "id": "u3",
+      "name": "Fatima Al-Sayed",
+      "email": "fatima.alsayed@york.ie",
+      "discipline": "dev",
+      "technologies": ["react", "performance", "caching"],
+      "experience_years": 1,
+      "seniority": "junior",
+      "max_complexity": "low",
+      "current_load": 0
+    },
+    {
+      "id": "u4",
+      "name": "Tom Bracewell",
+      "email": "tom.bracewell@york.ie",
+      "discipline": "qa",
+      "technologies": ["playwright", "api-testing", "performance-testing"],
+      "experience_years": 5,
+      "seniority": "senior",
+      "max_complexity": "high",
+      "current_load": 1
+    },
+    {
+      "id": "u5",
+      "name": "Grace Osei",
+      "email": "grace.osei@york.ie",
+      "discipline": "qa",
+      "technologies": ["manual-testing", "csv", "regression"],
+      "experience_years": 2,
+      "seniority": "mid",
+      "max_complexity": "medium",
+      "current_load": 3
+    },
+    {
+      "id": "u6",
+      "name": "Liam O'Connor",
+      "email": "liam.oconnor@york.ie",
+      "discipline": "ui_ux",
+      "technologies": ["figma", "design-systems", "accessibility"],
+      "experience_years": 4,
+      "seniority": "mid",
+      "max_complexity": "high",
+      "current_load": 2
+    },
+    {
+      "id": "u7",
+      "name": "Sana Qureshi",
+      "email": "sana.qureshi@york.ie",
+      "discipline": "ui_ux",
+      "technologies": ["figma", "user-research"],
+      "experience_years": 1,
+      "seniority": "junior",
+      "max_complexity": "low",
+      "current_load": 0
+    },
+    {
+      "id": "u8",
+      "name": "Marcus Lindqvist",
+      "email": "marcus.lindqvist@york.ie",
+      "discipline": "devops",
+      "technologies": ["terraform", "ci-cd", "migrations", "aws"],
+      "experience_years": 7,
+      "seniority": "senior",
+      "max_complexity": "high",
+      "current_load": 1
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "product": { "name": null, "competitors": [] },
+  "jira": {
+    "site": "https://york-team-uvwkz4j6.atlassian.net",
+    "project_key": "DEV",
+    "issue_types": { "epic": null, "story": "New Feature", "task": "Sub-task" },
+    "epic_as_label": true
+  },
+  "confluence": {
+    "site": null,
+    "space_key": null,
+    "parent_page_title": null,
+    "note": "Confluence returns 404 on york-team-uvwkz4j6; PRD stays local in prd.md"
+  },
+  "github": {
+    "repos": [],
+    "note": "GitHub MCP not connected; comparison skipped until a repo is added"
+  }
+}

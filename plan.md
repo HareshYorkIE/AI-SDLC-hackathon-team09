@@ -18,7 +18,7 @@ Requirements rarely arrive as clean specs. They arrive as Zoom transcripts, clie
 
 A tool that turns messy input into tickets **anyone can act on**, uses **gates** to reject anything vague or invented, and runs a **tracked clarification loop** with the client and PM until every question is answered and signed off.
 
-> **We don't guess, and we don't invent.** Missing information becomes a clarifying question, never an assumption. And every question comes with a proposed answer, so stakeholders can simply confirm instead of starting from a blank page.
+> **We don't guess, and we don't invent.** Missing information becomes a clarifying question, never an assumption. And every question comes with a proposed answer, so stakeholders can simply confirm instead of starting from a blank page. Where competitors exist, that proposal is shaped by how they solve it and what their users complain about.
 
 ### What "verifiable" means
 
@@ -119,8 +119,8 @@ We wrote four realistic inputs, each with **deliberately planted defects**, and 
 ```json
 {
   "F3": {
-    "expected_ready": ["CSV export for admins"],
-    "expected_flags": ["contradiction:format", "ambiguous:it"],
+    "expected_ready": [],
+    "expected_flags": ["contradiction:format", "ambiguous:it", "open:archived_accounts"],
     "must_not_appear": ["dark mode"]
   }
 }
@@ -143,6 +143,7 @@ Gates tell us **what** is unclear. The clarification loop makes sure it actually
 
 ```
 [A] PRD DRAFT        PRD + open questions + proposed solutions
+   │                 Proposals informed by competitor research (how they do it + their users' pain points)
    │
    ▼
 [B] PUBLISH          Create Confluence clarification page (table below)
@@ -169,14 +170,28 @@ Gates tell us **what** is unclear. The clarification loop makes sure it actually
 
 One page per PRD. The client or PM fills in the **Answer** and **Decision** columns; everything else is generated.
 
-| Q#  | Question                       | Source quote  | Why it matters               | Our proposed solution                      | Alternatives        | Owner  | Answer | Decision                 | Status | Due date   | Last reminder |
-| --- | ------------------------------ | ------------- | ---------------------------- | ------------------------------------------ | ------------------- | ------ | ------ | ------------------------ | ------ | ---------- | ------------- |
-| Q1  | Which export format is needed? | "Add export." | Defines scope and test cases | CSV first (opens in Excel, smallest build) | XLSX, PDF           | Client |        | Accept / Modify / Reject | open   | 2026-10-30 | 2026-10-29    |
-| Q2  | Who is allowed to export?      | "Add export." | Drives permissions and UI    | Admins only in v1                          | All logged-in users | PM     |        |                          | open   | 2026-10-30 | —             |
+| Q#  | Question                       | Source quote  | Why it matters               | Our proposed solution                                   | Alternatives        | Competitor insight                                                                   | Owner  | Answer | Decision                 | Status | Due date   | Last reminder |
+| --- | ------------------------------ | ------------- | ---------------------------- | ------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------ | ------ | ------ | ------------------------ | ------ | ---------- | ------------- |
+| Q1  | Which export format is needed? | "Add export." | Defines scope and test cases | CSV first, with UTF-8 encoding and the current filters applied | XLSX, PDF           | Competitors A and B both offer CSV + XLSX. Top review complaint: broken non-English characters in CSV ([link]) | Client |        | Accept / Modify / Reject | open   | 2026-10-30 | 2026-10-29    |
+| Q2  | Who is allowed to export?      | "Add export." | Drives permissions and UI    | Admins only in v1, with an audit log of each export     | All logged-in users | Competitor A lets all users export. Reviews mention data leaks and the lack of an audit trail ([link]) | PM     |        |                          | open   | 2026-10-30 | —             |
 
 - **Proposed solution is mandatory.** Every question ships with our recommendation and the reason, so stakeholders can answer with one click ("Accept") instead of writing an essay.
 - **Status values:** `open` → `answered` → `closed`, or `conflict` when the client and PM disagree, or an answer contradicts an earlier one.
 - **Answers become sources.** Once a question is closed, its answer is a valid source for the Traceability gate, with a link to the Confluence row.
+
+### Competitor-informed proposals
+
+If the client's application has competitors, every proposed solution is shaped by what they do and what their users complain about. That way we suggest solutions that meet market expectations and avoid known mistakes.
+
+1. **Identify competitors:** use the list the client or PM gives us. If there isn't one, run a web search for products in the same category and ask the PM to confirm the list in the first email.
+2. **Feature baseline:** for each open question, check how each competitor handles it, using public docs, help centers, pricing pages, and changelogs. Example: which export formats they offer, and which user roles can export.
+3. **Pain points:** collect recurring complaints about that feature from public reviews and forums (G2, Capterra, App Store / Play Store, Reddit, community forums). Group them into themes and count how often each comes up.
+4. **Shape the proposal:** recommend at least the market baseline, plus a fix for the top pain point. Where it helps, add a **differentiator**: something competitors lack that users ask for.
+5. **Cite everything:** every competitor insight links to its source and the date it was checked, so the client can verify it.
+
+**Guardrail: competitor research is never a requirement source.** It only informs the *proposed solution* column. Nothing becomes a requirement until the client or PM accepts it on the page, so the Traceability gate still holds. We suggest, we don't invent.
+
+Output: a **competitor snapshot** on the Confluence page (competitor, how they handle the feature, top pain points, source links), shared in the Publish email.
 
 ### Emails at every stage
 
@@ -267,6 +282,7 @@ Epic                    one per major capability in the PRD
 | Email         | SMTP / SendGrid, dry-run mode for the demo                               | Notifications at every stage                     |
 | Scheduler     | Cron or GitHub Actions scheduled workflow                                | Daily check and reminders, no server to run      |
 | Impact scan   | GitHub / GitLab APIs (`PyGithub`, `python-gitlab`), CodeQL / GitLab SAST | Find affected code, owners, and risks            |
+| Competitors   | Web search API (e.g. Tavily / SerpAPI) + page fetch, summarized by Claude | Feature baseline and pain points, with citations |
 | Tracker       | Jira REST API, GitHub / GitLab Issues                                    | Create epics, stories, and tasks                 |
 | Dev tools     | Claude Code, Cursor, GitHub                                              | Parallel work across three people                |
 
@@ -282,6 +298,7 @@ vague2tickets/
 ├── gates.py           # Four gates + status logic
 ├── clarify/
 │   ├── table.py       # Build clarification table + proposed solutions
+│   ├── competitors.py # Competitor baseline + pain points, with source links
 │   ├── confluence.py  # Publish / read the Confluence page
 │   ├── notifier.py    # Email templates + sending (dry-run by default)
 │   └── reminders.py   # Daily check, reminders, escalation
@@ -318,6 +335,7 @@ vague2tickets/
 - **Developer-agent check:** a second LLM acts as a developer and lists any questions it would need answered before building a ticket. An empty list means the ticket is truly actionable.
 - **Live Confluence page:** publish the clarification table to a real Confluence space.
 - **Conflict detector:** flag when the client's answer contradicts the PM's answer or an earlier source quote.
+- **Competitor insight column:** for the demo fixtures, show a pre-researched competitor baseline and top pain point next to each proposed solution.
 
 ## 11. Demo (3 minutes)
 
@@ -336,6 +354,7 @@ vague2tickets/
 | Days of back-and-forth to clarify                      | One tracked page, proposed answers, automatic reminders |
 | Gaps filled with assumptions                           | Invented requirements rejected                          |
 | Impact discovered during development                   | Affected code and owners found before sign-off          |
+| Competitor research done ad hoc, or not at all         | Every proposal backed by competitor baseline + pain points |
 | Tickets written by hand                                | Epics, stories, and tasks per discipline, with timeline |
 
 ## 13. Future work
@@ -347,6 +366,7 @@ vague2tickets/
 - **Slack / Teams notifications** alongside email, for teams that live in chat.
 - **Status dashboard:** open questions per PRD, average answer time, and who is blocking.
 - **Estimation from history:** use past velocity from Jira to make proposed timelines more realistic.
+- **Competitor watch:** re-check competitor features and reviews on a schedule, and flag new pain points or launches that affect open PRDs.
 
 ## 14. Risks and mitigations
 
@@ -362,3 +382,6 @@ vague2tickets/
 | Code scanning exposes source code            | Read-only tokens; scan runs inside our CI; only file paths go to the LLM     |
 | Impact analysis misses or over-reports areas | Each affected team confirms its area before sign-off                         |
 | Timeline estimates are unrealistic           | Labeled as proposals; PM adjusts before sharing                              |
+| Competitor info is wrong or outdated         | Every insight cites a link and a checked date; PM reviews before publishing  |
+| Competitor ideas sneak in as requirements    | Research only fills the proposal column; requirements need stakeholder acceptance |
+| Legal / ethical issues in research           | Public sources only (docs, reviews, forums); no scraping behind logins        |

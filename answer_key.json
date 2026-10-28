@@ -1,0 +1,42 @@
+{
+  "F1": {
+    "expected_ready": [],
+    "expected_flags": ["missing:format", "missing:actor", "missing:done_condition"],
+    "must_not_appear": []
+  },
+  "F2": {
+    "expected_ready": [],
+    "expected_flags": ["vague:faster", "vague:intuitive", "vague:modern", "missing:actor", "vague:ASAP"],
+    "must_not_appear": []
+  },
+  "F3": {
+    "expected_ready": [],
+    "expected_flags": ["contradiction:format", "ambiguous:it", "open:archived_accounts"],
+    "must_not_appear": ["dark mode"]
+  },
+  "F4": {
+    "expected_ready": ["Admins filter invoices by status"],
+    "expected_flags": [],
+    "must_not_appear": ["login", "Google SSO"]
+  },
+  "F5": {
+    "expected_ready": [
+      "Admins export filtered invoice list to CSV",
+      "Export completion logged to admin audit log"
+    ],
+    "expected_needs_clarification": [
+      "Emailing the exported file to the requester"
+    ],
+    "expected_flags": [
+      "vague:polished",
+      "vague:modern",
+      "vague:clunky",
+      "open:email_export_to_requester"
+    ],
+    "expected_references": [
+      { "ticket_about": "CSV export of the invoice list", "key": "DEV-42", "relation": "changes" }
+    ],
+    "must_not_appear": ["polished", "modern", "clunky"],
+    "notes": "Targets the five-gate gatekeeper: the CSV-export ticket must carry one acceptance criterion per named status (paid, unpaid, overdue) for Testability, must keep '5,000 rows' and 'Admins only' verbatim in its criteria for Completeness, and must cite DEV-42 in `references` with relation `changes`. The email-the-file idea has no decision and no `D#`, so its ticket must fail the Resolution gate and stay `needs_clarification` even though nothing else is wrong with it. In fixture mode (step 7 skipped), both ready tickets' plan.json tasks should show `impact_areas: []` and a 'did not run' note instead of invented impact areas or design references."
+  }
+}
